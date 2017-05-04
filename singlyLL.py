@@ -5,14 +5,15 @@
 #
 #
 #######################################################################################
+
 class SNode(object):
  
     def __init__(self, data, next):
         self.data = data
         self.next = next
  
- 
-class SingleList(object):
+
+class Queue(object):
  
     head = None
     tail = None
@@ -25,7 +26,7 @@ class SingleList(object):
             current_node = current_node.next
         print None
  
-    def append(self, data):
+    def enqueue(self, data):
         node = SNode(data, None)
         if self.head is None:
             self.head = self.tail = node
@@ -33,10 +34,10 @@ class SingleList(object):
             self.tail.next = node
         self.tail = node
  
-    def removeFirst(self):
+    def dequeue(self):
         current_node = self.head
         if(self.head.next is not None):
-        	self.head = self.head.next
+            self.head = self.head.next
 
     def search(self, node_value):
         current_node = self.head
@@ -50,13 +51,3 @@ class SingleList(object):
             current_node = current_node.next
 
         return False
-
-l = SingleList()
-l.append(21)
-l.append(3)
-l.append(43)
-l.append(100)
-l.append(15)
-l.show()
-l.removeFirst()
-l.show()

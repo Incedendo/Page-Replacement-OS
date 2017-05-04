@@ -1,131 +1,8 @@
 import sys
 from random import randint
-
-
-#######################################################################################
-#
-#	Singly LL
-#
-#
-#
-#######################################################################################
-class SNode(object):
- 
-    def __init__(self, data, next):
-        self.data = data
-        self.next = next
- 
-
-class Queue(object):
- 
-    head = None
-    tail = None
- 
-    def show(self):
-        print "Showing list data:"
-        current_node = self.head
-        while current_node is not None:
-            print current_node.data, " -> ",
-            current_node = current_node.next
-        print None
- 
-    def enqueue(self, data):
-        node = SNode(data, None)
-        if self.head is None:
-            self.head = self.tail = node
-        else:
-            self.tail.next = node
-        self.tail = node
- 
-    def dequeue(self):
-        current_node = self.head
-        if(self.head.next is not None):
-        	self.head = self.head.next
-
-    def search(self, node_value):
-        current_node = self.head
-        previous_node = None
-        while current_node is not None:
-            if current_node.data == node_value:
-                return True
- 
-            # needed for the next iteration
-            previous_node = current_node
-            current_node = current_node.next
-
-        return False
-
-
-#######################################################################################
-#
-#	Doubly LL
-#
-#
-#
-#######################################################################################
-class Node(object):
- 
-    def __init__(self, data, prev, next):
-        self.data = data
-        self.prev = prev
-        self.next = next
- 
- 
-class DoubleList(object):
- 
-    head = None
-    tail = None
- 
-    def append(self, data):
-        new_node = Node(data, None, None)
-        if self.head is None:
-            self.head = self.tail = new_node
-        else:
-            # add 
-            new_node.prev = self.tail
-            new_node.next = None
-            self.tail.next = new_node
-            self.tail = new_node
- 
-    def remove(self, node_value):
-        current_node = self.head
- 
-        while current_node is not None:
-            if current_node.data == node_value:
-                # if it's not the first element
-                if current_node.prev is not None:
-                    current_node.prev.next = current_node.next
-                    current_node.next.prev = current_node.prev
-                else:
-                    # otherwise we have no prev (it's None), head is the next one, and prev becomes None
-                    self.head = current_node.next
-                    current_node.next.prev = None
- 
-            current_node = current_node.next
-
-    def removeHead(self):
-        current_node = self.head
-        # otherwise we have no prev (it's None), head is the next one, and prev becomes None
-        self.head = current_node.next
-        current_node.next.prev = None
-
-    def removeTail(self):
-        current_node = self.tail
-        # otherwise we have no prev (it's None), head is the next one, and prev becomes None
-        self.tail = current_node.prev
-        current_node.prev.next = None
- 
-
-    def search(self, node_value):
-        current_node = self.head
- 
-        while current_node is not None:
-            if current_node.data == node_value:
-                return True
-
-            current_node = current_node.next
-
-        return False
+from singlyLL import SNode, Queue
+from doubly_linklist import DNode, DoubleList
+from importFile import printMess as simpager_printMess
 
 #######################################################################################
 #
@@ -150,30 +27,23 @@ def inFrame(num, source):
 def fifo(res, fr):
 	fautls = 0
 	fill = 0
-	index = 0
-	currently_inFrame = 0
 	q = Queue()
-	print "frame num: ", fr
-	for i in res:
+	for num in res:
 		if(fill < fr):
-			if( (fill == 0) or (q.search(res[index]) == False)):
+			if(q.search(num) == False):
 				# enqueue the item in the frames
-				q.enqueue(res[index])
+				q.enqueue(num)
 				# increment the count of number of frames filled
 				fill += 1
 				fautls += 1
 		# if max no of frames are filled, pop and replace
 		else:
-			# check if next item is already in frame
-			#if(inFrame(res[index],) == False):
-			if(q.search(res[index]) == False):
+			if(q.search(num) == False):
 				#remove 1st item
 				q.dequeue()
 				#enqueue the next element 
-				q.enqueue(res[index])
+				q.enqueue(num)
 				fautls += 1
-		# increment the index in the frame array
-		index += 1
 
 	return fautls
 
@@ -294,34 +164,39 @@ def LRU(res, fr):
 	fautls = 0
 	fill = 0
 	index = 0
+	# 
 	d = DoubleList()
 	#print "frame num: ", fr
-	for i in res:
+	for num in res:
 		if(fill < fr):
-			d.append(res[index])
-			# increment the index in the frame array
-			index += 1
-			# increment the count of number of frames filled
-			if(d.search(res[index])):
+			# if the frame already resided in the list
+			# take the frame out and update the position to the top of the stack
+			# keep the fill var the same
+			if(d.search(num)):
+				d.remove(num)
+				d.append(num)
+			# if the frame IS NEW
+			else: 
+				d.append(num)
 				fill += 1
 				fautls += 1
 		else:
-			# if found in current frames, update the value of MRU
-			if(d.search(res[index]) ):
-				d.remove(res[index])
-				d.append(res[index])
+			# if found in current frames, 
+			if(d.search(num)):
+				d.remove(num)
+				d.append(num)
 			else:
+				# remove the very first frame added ( least recently used)
 				d.removeHead()
-				d.append(res[index])
-				fautls += 1
-			
-			index += 1
-	
+				d.append(num)
+				fautls += 1			
+
 	return fautls
 
 #######################################################################################
 #
 #	MRU
+#		
 #
 #
 #######################################################################################
@@ -331,26 +206,25 @@ def MRU(res, fr):
 	index = 0
 	d = DoubleList()
 	#print "frame num: ", fr
-	for i in res:
+	for num in res:
 		if(fill < fr):
-			d.append(res[index])
-			# increment the index in the frame array
-			index += 1
-			# increment the count of number of frames filled
-			if(d.search(res[index])):
-				fill += 1
+			if(d.search(num) ):
+				d.remove(num)
+				d.append(num)
+			else:
+				d.append(num)
+				fill += 1 		# increment the count of number of frames filled
 				fautls += 1
 		else:
 			# if found in current frames, update the value of MRU
-			if(d.search(res[index]) ):
-				d.remove(res[index])
-				d.append(res[index])
+			if(d.search(num) ):
+				d.remove(num)
+				d.append(num)
 			else:
 				d.removeTail()
-				d.append(res[index])
+				d.append(num)
 				fautls += 1
-			
-			index += 1
+		index += 1
 	
 	return fautls
 
@@ -361,7 +235,7 @@ def MRU(res, fr):
 #
 #######################################################################################
 def MFU(res, fr):
-	fautls = 0
+	faults = 0
 	fill = 0
 	index = 0
 	list = []
@@ -369,26 +243,36 @@ def MFU(res, fr):
 	#print "frame num: ", fr
 	for i in res:
 		if(fill < fr):
-			if( (fill == 0) or (res[index] not in list)):
-				list.append(res[index])
-				count.append(1)
-				fill += 1
-				fautls += 1
 			if (res[index] in list):
 				count[list.index(res[index])] += 1
+				#print "count of " + str(res[index]) + " = " + str(count[list.index(res[index])])
+			if( res[index] not in list ):
+				list.append(res[index])
+				count.append(1)
+				#print "count of " + str(res[index]) + " = " + str(count[list.index(res[index])])
+				fill += 1
+				faults += 1
 		else:
 			# if found in current frames, update the value of MRU
 			if(res[index] in list ):
 				count[list.index(res[index])] += 1 
+				#print "count of " + str(res[index]) + " = " + str(count[list.index(res[index])])
 			else:
 				max_count = max(count)
+				# find the index of the MFU frame in the list
 				pos = count.index(max_count)
+				print "Replacing " + str(list[pos]) + " with " + str(res[index])
+				# replace the MFU frame with the newly referenced frame
 				list[pos] = res[index]
+				# update the count of the newly referenced frame.
 				count[pos] = 1
-				fautls += 1
+				#print "count of " + str(list[pos]) +" = " + str(count[pos])
+				faults += 1
 		index += 1
+		print "fault = " + str(faults) + " , list: "+ str(list) +", count: " + str(count) 
+		# print count
 	
-	return fautls
+	return faults
 
 #######################################################################################
 #
@@ -403,28 +287,42 @@ def LFU(res, fr):
 	list = []
 	count = []
 	#print "frame num: ", fr
-	for i in res:
+	d = DoubleList()
+	for num in res:
+		# only for the first fr frame
 		if(fill < fr):
-			if( (fill == 0) or (res[index] not in list)):
-				list.append(res[index])
+			# case when that frame has been added previously and there are still available frame
+			if (num in list):
+				count[list.index(num)] += 1
+				# print "index = " + str(list.index(num))
+			# 1st frame or if that frame haven't been added yet
+			if( num not in list ):
+				d.append(num)  # add to the queue at the same time
+				list.append(num)
 				count.append(1)
 				fill += 1
 				fautls += 1
-			if (res[index] in list):
-				count[list.index(res[index])] += 1
 		else:
 			# if found in current frames, update the value of MRU
-			if(res[index] in list ):
-				count[list.index(res[index])] += 1 
+			if(num in list ):
+				count[list.index(num)] += 1 
+				# update position of the frame in the QUEUE
+				d.remove(num)
+				d.append(num)
 			else:
 				min_count = min(count)
 				pos = count.index(min_count)
-				list[pos] = res[index]
+				toBeReplaced = the value that was referenced the longest time ago
+				list[toBeReplaced] = num
 				count[pos] = 1
 				fautls += 1
+
+				d.append(num)  # add to the queue at the same time
+
 		index += 1
 	
 	return fautls
+
 
 #######################################################################################
 #
@@ -451,6 +349,9 @@ frame_num = map(int, frames.split(' '))
 # ans = opt(result, frame_num[0])
 # print "OPT: ", ans
 
+# ans = rand(result, frame_num[0])
+# print "Rand: ", ans
+
 # ans = LRU(result, frame_num[0])
 # print "LRU: ", ans
 
@@ -460,8 +361,10 @@ frame_num = map(int, frames.split(' '))
 # ans = MFU(result, frame_num[0])
 # print "MFU: ", ans
 
-ans = LFU(result, frame_num[0])
-print "LFU: ", ans
+# ans = LFU(result, frame_num[0])
+# print "LFU: ", ans
+
+# simpager_printMess(filename)
 
 
 
