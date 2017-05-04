@@ -311,6 +311,7 @@ def LFU(res, fr):
 				# update position of the frame in the QUEUE
 				d.remove(num)
 				d.append(num, count[list.index(num)])
+				d.printCount()
 			else:
 				min_count = min(count)
 				numReplaced = d.removeCount(min_count)
@@ -320,6 +321,7 @@ def LFU(res, fr):
 				count[pos] = 1
 				fautls += 1
 				d.append(num,1)  # add to the queue at the same time
+				d.printCount()
 		print list
 	
 	return fautls

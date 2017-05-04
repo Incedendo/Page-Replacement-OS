@@ -113,10 +113,20 @@ class DoubleList(object):
             current_node = current_node.next
         print "*"*50
 
-# d = DoubleList()
-# d.append(7,2)
-# d.append(0,2)
-# d.append(1,2)
-# d.show()
-# num = d.removeCount(2)
-# print "num removed: ", num
+    def printCount(self):
+        cur = self.head
+        while cur is not None:
+            print cur.data, "[",cur.count, "]","->",
+            cur = cur.next
+        print "None"
+
+d = DoubleList()
+d.append(7,2)
+d.append(0,2)
+d.append(1,2)
+d.printCount()
+num = d.removeCount(2)
+print "num removed: ", num
+d.append(5,2)
+num = d.removeCount(2)
+print "num removed: ", num
