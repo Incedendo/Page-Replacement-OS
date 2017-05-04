@@ -280,6 +280,52 @@ def MFU(res, fr):
 #
 #
 #######################################################################################
+# def LFU(res, fr):
+# 	fautls = 0
+# 	fill = 0
+# 	index = 0
+# 	list = []
+# 	count = []
+# 	#print "frame num: ", fr
+# 	d = DoubleList()
+# 	for num in res:
+# 		# only for the first fr frame
+# 		if(fill < fr):
+# 			# case when that frame has been added previously and there are still available frame
+# 			if (num in list):
+# 				count[list.index(num)] += 1
+# 				d.remove(num)
+# 				d.append(num, count[list.index(num)])
+# 				# print "index = " + str(list.index(num))
+# 			# 1st frame or if that frame haven't been added yet
+# 			if( num not in list ):
+# 				d.append(num, 1)  # add to the queue at the same time
+# 				list.append(num)
+# 				count.append(1)
+# 				fill += 1
+# 				fautls += 1
+# 		else:
+# 			# if found in current frames, update the value of MRU
+# 			if(num in list ):
+# 				count[list.index(num)] += 1 
+# 				# update position of the frame in the QUEUE
+# 				d.remove(num)
+# 				d.append(num, count[list.index(num)])
+# 				d.printCount()
+# 			else:
+# 				min_count = min(count)
+# 				numReplaced = d.removeCount(min_count)
+# 				print "Num replaced = ", numReplaced
+# 				pos = list.index(numReplaced)
+# 				list[pos] = num
+# 				count[pos] = 1
+# 				fautls += 1
+# 				d.append(num,1)  # add to the queue at the same time
+# 				d.printCount()
+# 		print list
+	
+# 	return fautls
+
 def LFU(res, fr):
 	fautls = 0
 	fill = 0
