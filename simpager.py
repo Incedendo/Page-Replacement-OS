@@ -174,21 +174,21 @@ def LRU(res, fr):
 			# keep the fill var the same
 			if(d.search(num)):
 				d.remove(num)
-				d.append(num)
+				d.append(num, 0)
 			# if the frame IS NEW
 			else: 
-				d.append(num)
+				d.append(num, 0)
 				fill += 1
 				fautls += 1
 		else:
 			# if found in current frames, 
 			if(d.search(num)):
 				d.remove(num)
-				d.append(num)
+				d.append(num, 0)
 			else:
 				# remove the very first frame added ( least recently used)
 				d.removeHead()
-				d.append(num)
+				d.append(num, 0)
 				fautls += 1			
 
 	return fautls
@@ -210,19 +210,19 @@ def MRU(res, fr):
 		if(fill < fr):
 			if(d.search(num) ):
 				d.remove(num)
-				d.append(num)
+				d.append(num,0)
 			else:
-				d.append(num)
+				d.append(num, 0)
 				fill += 1 		# increment the count of number of frames filled
 				fautls += 1
 		else:
 			# if found in current frames, update the value of MRU
 			if(d.search(num) ):
 				d.remove(num)
-				d.append(num)
+				d.append(num,0)
 			else:
 				d.removeTail()
-				d.append(num)
+				d.append(num,0)
 				fautls += 1
 		index += 1
 	
@@ -294,10 +294,12 @@ def LFU(res, fr):
 			# case when that frame has been added previously and there are still available frame
 			if (num in list):
 				count[list.index(num)] += 1
+				d.remove(num)
+				d.append(num, count[list.index(num)])
 				# print "index = " + str(list.index(num))
 			# 1st frame or if that frame haven't been added yet
 			if( num not in list ):
-				d.append(num)  # add to the queue at the same time
+				d.append(num, 1)  # add to the queue at the same time
 				list.append(num)
 				count.append(1)
 				fill += 1
@@ -308,18 +310,17 @@ def LFU(res, fr):
 				count[list.index(num)] += 1 
 				# update position of the frame in the QUEUE
 				d.remove(num)
-				d.append(num)
+				d.append(num, count[list.index(num)])
 			else:
 				min_count = min(count)
-				pos = count.index(min_count)
-				toBeReplaced = the value that was referenced the longest time ago
-				list[toBeReplaced] = num
+				numReplaced = d.removeCount(min_count)
+				print "Num replaced = ", numReplaced
+				pos = list.index(numReplaced)
+				list[pos] = num
 				count[pos] = 1
 				fautls += 1
-
-				d.append(num)  # add to the queue at the same time
-
-		index += 1
+				d.append(num,1)  # add to the queue at the same time
+		print list
 	
 	return fautls
 
@@ -361,8 +362,8 @@ frame_num = map(int, frames.split(' '))
 # ans = MFU(result, frame_num[0])
 # print "MFU: ", ans
 
-# ans = LFU(result, frame_num[0])
-# print "LFU: ", ans
+ans = LFU(result, frame_num[0])
+print "LFU: ", ans
 
 # simpager_printMess(filename)
 

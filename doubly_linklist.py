@@ -7,8 +7,9 @@
 #######################################################################################
 class DNode(object):
  
-    def __init__(self, data, prev, next):
+    def __init__(self, data,count, prev, next):
         self.data = data
+        self.count = count
         self.prev = prev
         self.next = next
  
@@ -19,8 +20,8 @@ class DoubleList(object):
     tail = None
  
     # add a new node to the END of the List
-    def append(self, data):
-        new_node = DNode(data, None, None)
+    def append(self, data,count):
+        new_node = DNode(data, count, None, None)
         if self.head is None:
             self.head = self.tail = new_node
         else:
@@ -51,6 +52,31 @@ class DoubleList(object):
                         self.tail = self.tail.prev 
                 break
             current_node = current_node.next
+
+    def removeCount(self, count):
+        current_node = self.head
+ 
+        while current_node is not None:
+            if current_node.count == count:
+                num = current_node.data
+                # if it's not the first element
+                if current_node.prev is not None:
+                    current_node.prev.next = current_node.next
+                    if(current_node.next is not None):
+                        current_node.next.prev = current_node.prev
+                    else:
+                        self.tail = self.tail.prev
+                else:
+                    # otherwise we have no prev (it's None), head is the next one, and prev becomes None
+                    self.head = current_node.next
+                    if(current_node.next is not None):
+                        current_node.next.prev = None
+                    else:
+                        self.tail = self.tail.prev 
+                break
+            current_node = current_node.next
+
+        return num
 
     def removeHead(self):
         if self.head is not None:
@@ -86,3 +112,11 @@ class DoubleList(object):
             print current_node.next.data if hasattr(current_node.next, "data") else None
             current_node = current_node.next
         print "*"*50
+
+# d = DoubleList()
+# d.append(7,2)
+# d.append(0,2)
+# d.append(1,2)
+# d.show()
+# num = d.removeCount(2)
+# print "num removed: ", num
